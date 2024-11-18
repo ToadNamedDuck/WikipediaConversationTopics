@@ -40,7 +40,7 @@ async function regenerateLoop(){
     }
 }
 
-function parseInput(response){
+async function parseInput(response){
     response = response.toLowerCase()
     switch(response){
         case "y":{
@@ -51,7 +51,8 @@ function parseInput(response){
         }
         case "n":{
             console.log("Too damn bad!")
-            //we want to regenerate the random list(s) here
+            //regenerate the random list(s) here
+            await generateList().then(table => console.table(table));
             return false;
         }
         default:{
