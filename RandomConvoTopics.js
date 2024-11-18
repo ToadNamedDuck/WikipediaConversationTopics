@@ -10,9 +10,15 @@ const rl = readline.createInterface({
 
 
 var answeredYes = false; //Used for looping the y/n question if the user is not the brightest.
+var titles = [];
 
-function main(){
+async function main(){
     //The main execution sequence of the program.
+
+    //Generate the list of articles.
+    titles = await generateList();
+    console.table(titles);
+
     regenerateLoop();
 
 }
@@ -55,14 +61,19 @@ function parseInput(response){
     }
 }
 
-function generateList(){
+async function generateList(){
     var url = "https://en.wikipedia.org/w/api.php?action=query&format=json&list=random&rnnamespace=0&rnlimit=5"
-
-    fetch(url)
-        .then(response => response.json())
-        .then(obj => {
-
-        })
+    const response = await (fetch(url));
+    const data = await response.json();
+    const articles = data.query.random;
+    
+    let names = [];
+    for(obj of articles){
+        names.push(obj.title)
+    }
+    return names;
 }
 
+
+//rl.close();
 main();
