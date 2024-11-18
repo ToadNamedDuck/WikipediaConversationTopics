@@ -16,11 +16,7 @@ var articleCategories = [];
 async function main(){
     //The main execution sequence of the program.
 
-    //Generate the list of articles.
-    titles = await generateList();
-    console.table(titles);
-    articleCategories = await getArticleCategories(titles[0])
-    console.table(articleCategories);
+    await generateAllData();
 
     regenerateLoop();
 
@@ -55,7 +51,8 @@ async function parseInput(response){
         case "n":{
             console.log("Too damn bad!")
             //regenerate the random list(s) here
-            await generateList().then(table => console.table(table));
+            await generateAllData();
+
             return false;
         }
         default:{
@@ -91,6 +88,19 @@ async function getArticleCategories(articleName){
     }
 
     return articleCategories;
+}
+
+async function getCategoriesForAllArticles(articlesArray){
+    for(let i = 4; i >= 0; i--){
+        articleCategories.push(...await getArticleCategories(articlesArray[i]))
+    }
+}
+
+async function generateAllData(){
+    titles = await generateList();
+    console.table(titles);
+    await getCategoriesForAllArticles(titles)
+    console.table(articleCategories);
 }
 
 main();
