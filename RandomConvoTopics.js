@@ -11,6 +11,7 @@ const rl = readline.createInterface({
 
 var answeredYes = false; //Used for looping the y/n question if the user is not the brightest.
 var titles = [];
+var articleCategories = [];
 
 async function main(){
     //The main execution sequence of the program.
@@ -18,6 +19,8 @@ async function main(){
     //Generate the list of articles.
     titles = await generateList();
     console.table(titles);
+    articleCategories = await getArticleCategories(titles[0])
+    console.table(articleCategories);
 
     regenerateLoop();
 
@@ -75,6 +78,19 @@ async function generateList(){
     return names;
 }
 
+async function getArticleCategories(articleName){
+    var url = `https://en.wikipedia.org/w/api.php?action=parse&page=${articleName}&format=json`;
+    const response = await (fetch(url));
+    const data = await response.json();
+    const categories = data.parse.categories.filter(category => !("hidden" in category));//filters out the categories that contain a key named "hidden"
 
-//rl.close();
+    const articleCategories = [];
+
+    for(category of categories){
+        articleCategories.push(category["*"])
+    }
+
+    return articleCategories;
+}
+
 main();
