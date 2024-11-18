@@ -8,10 +8,30 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
+
+var answeredYes = false; //Used for looping the y/n question if the user is not the brightest.
+
 function main(){
     //The main execution sequence of the program.
-    rl.question("Is this satisfactory to you? y/n \n", (input) => {parseInput(input)});
+    regenerateLoop();
 
+}
+
+//Convert rl.question into a promise-based system
+function askQuestion(question){
+    return new Promise((resolve) => {//create promise
+        rl.question(question, (answer) => {//the resolve function for promise input uses rl question to create question
+            resolve(answer);//the callback for the question returns the promise answer ?
+        })
+    })
+}
+
+async function regenerateLoop(){
+    while(!answeredYes){
+        await askQuestion("Is this list satisfactory? y/n \n")
+            .then((input) => parseInput(input))
+            .then(answer => answeredYes = answer);
+    }
 }
 
 function parseInput(response){
@@ -20,18 +40,29 @@ function parseInput(response){
         case "y":{
             //Job done, ready to close
             console.log("Good")
-            break;
+            rl.close();
+            return true;
         }
         case "n":{
             console.log("Too damn bad!")
             //we want to regenerate the random list(s) here
-            break;
+            return false;
         }
         default:{
-            console.log("I did not understand that. Please try entering 'y' or 'n' again.")
+            console.log("I did not understand that. I will ask again.")
+            return false;
         }
     }
-    rl.close();
+}
+
+function generateList(){
+    var url = "https://en.wikipedia.org/w/api.php?action=query&format=json&list=random&rnnamespace=0&rnlimit=5"
+
+    fetch(url)
+        .then(response => response.json())
+        .then(obj => {
+
+        })
 }
 
 main();
