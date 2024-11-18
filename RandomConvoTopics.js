@@ -44,12 +44,12 @@ async function parseInput(response){
     switch(response){
         case "y":{
             //Job done, ready to close
-            console.log("Good")
+            console.log("Excellent, I will leave you to your research.")
             rl.close();
             return true;
         }
         case "n":{
-            console.log("Too damn bad!")
+            console.log("Here is a new set of articles and their categories.")
             //regenerate the random list(s) here
             await generateAllData();
 
